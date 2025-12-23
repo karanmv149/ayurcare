@@ -21,28 +21,37 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+	'role',
     ];
+    
+public function isDoctor(): bool
+{
+    return $this->role === 'doctor';
+}
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+public function isPatient(): bool
+{
+    return $this->role === 'patient';
+}
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+public function isAdmin(): bool
+{
+    return $this->role === 'admin';
+}
+public function doctorProfile()
+{
+    return $this->hasOne(\App\Models\DoctorProfile::class);
+}
+public function isVerifiedDoctor(): bool
+{
+    return $this->isDoctor()
+        && $this->doctorProfile
+        && $this->doctorProfile->status === 'verified';
+}
+public function patientProfile()
+{
+    return $this->hasOne(\App\Models\PatientProfile::class);
+}
+
+    
 }
