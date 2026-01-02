@@ -13,6 +13,14 @@ class Consultation extends Model
         'assessment',
         'recommendation',
         'notes',
+        'video_status',
+        'started_at',
+        'ended_at',
+    ];
+
+    protected $casts = [
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
     ];
 
     public function doctor()

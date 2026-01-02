@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
-class RouteServiceProvider extends ServiceProvider
+class AppServiceProvider  extends ServiceProvider
 {
     public const HOME = '/redirect';
 

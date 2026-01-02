@@ -47,6 +47,13 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        $user = auth()->user();
+
+        return match ($user->role) {
+            'admin' => redirect()->route('admin.doctors'),
+            'doctor' => redirect()->route('doctor.dashboard'),
+            'patient' => redirect()->route('patient.dashboard'),
+            default => redirect('/'),
+        };
     }
 }

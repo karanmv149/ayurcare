@@ -14,6 +14,23 @@ class PatientProfileController extends Controller
     | Patient Intake Form
     |--------------------------------------------------------------------------
     */
+    public function dashboard()
+    {
+        $queueItem = \App\Models\Queue::where('patient_id', auth()->id())
+            ->whereIn('status', ['waiting', 'in_progress'])
+            ->with('doctor')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $activeVideoConsultation = Consultation::where('patient_id', auth()->id())
+            ->whereIn('video_status', ['scheduled', 'in_progress'])
+            ->whereNotNull('doctor_id')
+            ->latest() // Safest to get the most recent one
+            ->first();
+
+        return view('patient.dashboard', compact('queueItem', 'activeVideoConsultation'));
+    }
+
     public function show()
     {
         $profile = auth()->user()->patientProfile ?? null;
@@ -42,14 +59,20 @@ class PatientProfileController extends Controller
         $pitta = 0;
         $kapha = 0;
 
-        if (($data['sleep_quality'] ?? null) === 'light') $vata += 2;
-        if (($data['stress_level'] ?? null) === 'high') $vata += 2;
+        if (($data['sleep_quality'] ?? null) === 'light')
+            $vata += 2;
+        if (($data['stress_level'] ?? null) === 'high')
+            $vata += 2;
 
-        if (($data['digestion'] ?? null) === 'strong') $pitta += 2;
-        if (($data['diet_type'] ?? null) === 'spicy') $pitta += 2;
+        if (($data['digestion'] ?? null) === 'strong')
+            $pitta += 2;
+        if (($data['diet_type'] ?? null) === 'spicy')
+            $pitta += 2;
 
-        if (($data['sleep_quality'] ?? null) === 'deep') $kapha += 2;
-        if (($data['diet_type'] ?? null) === 'heavy') $kapha += 2;
+        if (($data['sleep_quality'] ?? null) === 'deep')
+            $kapha += 2;
+        if (($data['diet_type'] ?? null) === 'heavy')
+            $kapha += 2;
 
         $dominant = collect([
             'vata' => $vata,
@@ -98,5 +121,35 @@ class PatientProfileController extends Controller
             ->get();
 
         return view('patient.careplans', compact('carePlans'));
+    }
+
+    public function edit()
+    {
+        $profile = auth()->user()->patientProfile;
+
+        return view('patient.profile.edit', compact('profile'));
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'age' => 'nullable|integer|min:1|max:120',
+            'gender' => 'nullable|string|in:male,female,other',
+            'primary_concern' => 'nullable|string|max:1000',
+        ]);
+
+        $profile = auth()->user()->patientProfile;
+
+        if (!$profile) {
+            $profile = new PatientProfile(['user_id' => auth()->id()]);
+        }
+
+        $profile->update($request->only([
+            'age',
+            'gender',
+            'primary_concern',
+        ]));
+
+        return back()->with('success', 'Profile updated successfully.');
     }
 }

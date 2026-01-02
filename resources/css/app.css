@@ -1,3 +1,89 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        /* STEP 1: DESIGN TOKENS */
+        --color-primary: #2563EB;
+        --color-primary-light: #3B82F6;
+        --color-primary-soft: #EFF6FF;
+        --color-text-main: #111827;
+        --color-text-muted: #374151;
+        --color-border: #D1D5DB;
+        --color-bg-main: #FFFFFF;
+    }
+
+    /* STEP 2: TYPOGRAPHY NORMALIZATION */
+    body {
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+        background-color: var(--color-bg-main);
+    }
+
+    h1, h2, h3, h4 {
+        color: var(--color-text-main);
+        line-height: 1.25;
+        font-weight: 600; /* Improved clarity */
+    }
+
+    /* STEP 4: ACCESSIBILITY BASELINE */
+    /* Visible focus states */
+    button:focus-visible, 
+    a:focus-visible, 
+    input:focus-visible, 
+    textarea:focus-visible, 
+    select:focus-visible {
+        outline: 2px solid var(--color-primary);
+        outline-offset: 2px;
+    }
+}
+
+/* STEP 3: SPACING (Applied via layout utilities mostly, ensuring consistent base) */
+/* No Layout Rewrites - Spacing handled by Tailwind classes */
+
+/* ===== GLOBAL MOTION SYSTEM ===== */
+
+@keyframes fade-up {
+    0% {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.animate-fade-up {
+    animation: fade-up 0.7s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out forwards;
+}
+
+/* stagger helper */
+[data-delay="1"] { animation-delay: 0.1s; }
+[data-delay="2"] { animation-delay: 0.2s; }
+[data-delay="3"] { animation-delay: 0.3s; }
+[data-delay="4"] { animation-delay: 0.4s; }
+
+/* hover motion */
+.motion-card {
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+.motion-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 20px 30px -12px rgba(0,0,0,0.12);
+}

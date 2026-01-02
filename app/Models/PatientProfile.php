@@ -14,6 +14,7 @@ class PatientProfile extends Model
         'sleep_quality',
         'stress_level',
         'digestion',
+        'primary_concern',
         'vata',
         'pitta',
         'kapha',

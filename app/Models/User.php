@@ -21,7 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-	'role',
+	    'role',
+        'oauth_provider',
+        'oauth_id',
     ];
     
 public function isDoctor(): bool
@@ -51,6 +53,50 @@ public function isVerifiedDoctor(): bool
 public function patientProfile()
 {
     return $this->hasOne(\App\Models\PatientProfile::class);
+}
+
+// Reviews relationships
+public function reviewsAsDoctor()
+{
+    return $this->hasMany(Review::class, 'doctor_id');
+}
+
+public function reviewsAsPatient()
+{
+    return $this->hasMany(Review::class, 'patient_id');
+}
+
+// Accessors
+public function getAverageRatingAttribute()
+{
+    return $this->reviewsAsDoctor()->avg('rating') ?? 0;
+}
+
+public function getReviewsCountAttribute()
+{
+    return $this->reviewsAsDoctor()->count();
+}
+
+// Booking relationships
+public function doctorBookings()
+{
+    return $this->hasMany(Booking::class, 'doctor_id');
+}
+
+public function patientBookings()
+{
+    return $this->hasMany(Booking::class, 'patient_id');
+}
+
+// Message relationships
+public function sentMessages()
+{
+    return $this->hasMany(Message::class, 'sender_id');
+}
+
+public function receivedMessages()
+{
+    return $this->hasMany(Message::class, 'receiver_id');
 }
 
     
